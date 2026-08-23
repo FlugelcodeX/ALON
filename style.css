@@ -1,0 +1,2177 @@
+/* =========================================
+   RESET
+========================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: #020b15;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* =========================================
+   OCEAN BACKGROUND
+========================================= */
+
+.ocean-background {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+
+  background: linear-gradient(
+    to bottom,
+    #f27c62 0%,
+    #ee5f5c 5%,
+    #168ea7 19%,
+    #075b7e 35%,
+    #063c60 52%,
+    #032843 68%,
+    #02172b 84%,
+    #010b17 100%
+  );
+
+  /* Slow, smooth day/night repaint - see startDayCycle() in script.js */
+  transition: background 30s ease-in-out;
+}
+
+/* =========================================
+   HERO SKY
+   Everything here is scoped to the hero
+   section (not the fixed page background),
+   so it scrolls away with the hero instead
+   of staying pinned behind content further
+   down the page.
+========================================= */
+
+.hero-sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* =========================================
+   SUNSET
+========================================= */
+
+.sunset {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 30vh;
+
+  background: radial-gradient(
+    ellipse at 50% 90%,
+    rgba(255, 204, 103, 0.95) 0%,
+    rgba(247, 123, 92, 0.7) 22%,
+    rgba(159, 69, 91, 0.45) 45%,
+    transparent 75%
+  );
+
+  transition: opacity 30s ease-in-out;
+}
+
+.sun {
+  position: absolute;
+
+  width: 90px;
+  height: 90px;
+
+  top: 12vh;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background: #ffd889;
+
+  box-shadow:
+    0 0 40px rgba(255, 210, 130, 0.9),
+    0 0 120px rgba(255, 145, 90, 0.5);
+
+  /* The sun eases smoothly up/down and fades color over the same
+     30s window as the sky - this is what produces the sunrise /
+     sunset motion. Once its "top" value crosses into the sea
+     surface band it is physically covered by .sea-surface. */
+  transition:
+    opacity 30s ease-in-out,
+    background 30s ease-in-out,
+    box-shadow 30s ease-in-out,
+    top 30s ease-in-out;
+
+  z-index: 1;
+}
+
+/* =========================================
+   SEA SURFACE
+   A genuine waving horizon line built from
+   two solid (opaque) layers, each clipped
+   to a wave shape with a CSS mask. Because
+   the layers are opaque - not translucent -
+   there is no seam where a "wave" layer
+   meets the solid water fill below it: the
+   fill's top color matches the front wave's
+   color exactly, and the fill starts right
+   at the deepest point the wave mask ever
+   reaches. The waves animate by shifting the
+   mask position (not translating the whole
+   element), so the tile loops with no jump.
+========================================= */
+
+.sea-surface {
+  position: absolute;
+
+  top: 19vh;
+  left: -5%;
+  right: -5%;
+  bottom: 0;
+
+  z-index: 2;
+
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.wave-layer {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 90px;
+
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+}
+
+.wave-back {
+  background: #11778d;
+  opacity: 0.55;
+
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 90'><path d='M0,50 C37.5,26 75,74 112.5,50 C150,26 187.5,74 225,50 C262.5,26 300,74 300,50 L300,90 L0,90 Z'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 90'><path d='M0,50 C37.5,26 75,74 112.5,50 C150,26 187.5,74 225,50 C262.5,26 300,74 300,50 L300,90 L0,90 Z'/></svg>");
+  -webkit-mask-size: 300px 90px;
+  mask-size: 300px 90px;
+
+  animation: waveScrollBack 16s linear infinite;
+}
+
+.wave-front {
+  background: #168ea7;
+
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 340 90'><path d='M0,55 C42.5,32 85,78 127.5,55 C170,32 212.5,78 255,55 C297.5,32 340,78 340,55 L340,90 L0,90 Z'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 340 90'><path d='M0,55 C42.5,32 85,78 127.5,55 C170,32 212.5,78 255,55 C297.5,32 340,78 340,55 L340,90 L0,90 Z'/></svg>");
+  -webkit-mask-size: 340px 90px;
+  mask-size: 340px 90px;
+
+  animation: waveScrollFront 11s linear infinite;
+}
+
+@keyframes waveScrollBack {
+  from {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+
+  to {
+    -webkit-mask-position: -300px 0;
+    mask-position: -300px 0;
+  }
+}
+
+@keyframes waveScrollFront {
+  from {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+
+  to {
+    -webkit-mask-position: -340px 0;
+    mask-position: -340px 0;
+  }
+}
+
+.sea-fill {
+  position: absolute;
+
+  top: 78px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: linear-gradient(
+    to bottom,
+    #168ea7 0%,
+    #0f6e8f 12%,
+    #075b7e 26%,
+    #063c60 46%,
+    #032843 66%,
+    #02172b 85%,
+    #010b17 100%
+  );
+}
+
+/* =========================================
+   LIGHT RAYS
+========================================= */
+
+.light-rays {
+  position: absolute;
+
+  top: 28vh;
+  left: 0;
+
+  width: 100%;
+  height: 50vh;
+
+  overflow: hidden;
+
+  z-index: 3;
+
+  transition: opacity 30s ease-in-out;
+}
+
+.light-rays i {
+  position: absolute;
+
+  top: -20%;
+  width: 12%;
+  height: 120%;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+
+  transform: skewX(-12deg);
+
+  filter: blur(10px);
+
+  animation: rayMove 8s ease-in-out infinite;
+}
+
+.light-rays i:nth-child(1) {
+  left: 10%;
+}
+
+.light-rays i:nth-child(2) {
+  left: 32%;
+  animation-delay: -2s;
+}
+
+.light-rays i:nth-child(3) {
+  left: 58%;
+  animation-delay: -4s;
+}
+
+.light-rays i:nth-child(4) {
+  left: 80%;
+  animation-delay: -1s;
+}
+
+@keyframes rayMove {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* =========================================
+   PARTICLES
+========================================= */
+
+.underwater-particles {
+  position: absolute;
+  inset: 0;
+
+  z-index: 3;
+
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.5) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.25) 1px, transparent 1px);
+
+  background-size:
+    130px 130px,
+    220px 220px;
+
+  background-position:
+    0 0,
+    50px 90px;
+
+  opacity: 0.25;
+
+  animation: particles 35s linear infinite;
+}
+
+@keyframes particles {
+  from {
+    background-position:
+      0 0,
+      50px 90px;
+  }
+
+  to {
+    background-position:
+      0 600px,
+      50px 700px;
+  }
+}
+
+/* =========================================
+   BUBBLES (fixed page-level accent bubbles)
+========================================= */
+
+.bubbles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  z-index: 4;
+}
+
+.bubbles span {
+  position: absolute;
+
+  bottom: -20px;
+
+  width: 5px;
+  height: 5px;
+
+  border: 1px solid rgba(255, 255, 255, 0.35);
+
+  border-radius: 50%;
+
+  animation: bubbleRise linear infinite;
+}
+
+.bubbles span:nth-child(1) {
+  left: 12%;
+  animation-duration: 13s;
+}
+
+.bubbles span:nth-child(2) {
+  left: 24%;
+  animation-duration: 18s;
+}
+
+.bubbles span:nth-child(3) {
+  left: 36%;
+  animation-duration: 15s;
+}
+
+.bubbles span:nth-child(4) {
+  left: 48%;
+  animation-duration: 20s;
+}
+
+.bubbles span:nth-child(5) {
+  left: 57%;
+  animation-duration: 12s;
+}
+
+.bubbles span:nth-child(6) {
+  left: 67%;
+  animation-duration: 17s;
+}
+
+.bubbles span:nth-child(7) {
+  left: 76%;
+  animation-duration: 14s;
+}
+
+.bubbles span:nth-child(8) {
+  left: 84%;
+  animation-duration: 21s;
+}
+
+.bubbles span:nth-child(9) {
+  left: 44%;
+  animation-duration: 19s;
+}
+
+.bubbles span:nth-child(10) {
+  left: 92%;
+  animation-duration: 16s;
+}
+
+@keyframes bubbleRise {
+  0% {
+    transform: translateY(0) translateX(0) scale(0.5);
+
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translateY(-110vh) translateX(50px) scale(1.3);
+
+    opacity: 0;
+  }
+}
+
+/* =========================================
+   WATER BUBBLES — whole ocean, behind fish
+   Rendered inside .hero-sky and every
+   .depth-section (surface through deep-sea),
+   NOT inside .conservation - so the rising
+   bubble effect runs from the hero headline
+   down through the deep-sea zone and then
+   stops before the conservation section.
+
+   z-index 2 places this layer above each
+   section's own background / seafloor decor
+   (z-index 1) but below every .fish
+   (z-index 3) and the section text
+   (z-index 10) - bubbles read as part of the
+   water itself, rising behind the fish
+   rather than floating in front of them.
+
+   --wb-rise is set per-container in JS to
+   that container's actual height, so every
+   bubble travels the FULL height of whichever
+   zone it's in instead of a fixed distance
+   that could clip early in a tall section or
+   loop too soon in a short one.
+========================================= */
+
+.water-bubbles {
+  position: absolute;
+  inset: 0;
+
+  z-index: 2;
+
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.water-bubbles span {
+  position: absolute;
+
+  bottom: -60px;
+  left: var(--wb-left, 50%);
+
+  width: var(--wb-size, 8px);
+  height: var(--wb-size, 8px);
+
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle at 32% 28%,
+    rgba(255, 255, 255, 0.65),
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.04) 70%,
+    transparent 78%
+  );
+
+  box-shadow: inset -1px -1px 3px rgba(0, 10, 20, 0.25);
+
+  filter: blur(var(--wb-blur, 0px));
+
+  opacity: 0;
+
+  animation: waterBubbleRise var(--wb-dur, 14s) linear infinite;
+  animation-delay: var(--wb-delay, 0s);
+}
+
+@keyframes waterBubbleRise {
+  0% {
+    transform: translateY(0) translateX(0) scale(0.7);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: var(--wb-op, 0.5);
+  }
+
+  50% {
+    transform: translateY(calc(var(--wb-rise, 100vh) * -0.5))
+      translateX(var(--wb-drift, 14px)) scale(1);
+  }
+
+  90% {
+    opacity: var(--wb-op, 0.5);
+  }
+
+  100% {
+    transform: translateY(calc(var(--wb-rise, 100vh) * -1 - 60px))
+      translateX(calc(var(--wb-drift, 14px) * -1)) scale(1.15);
+    opacity: 0;
+  }
+}
+
+/* =========================================
+   NAVBAR
+========================================= */
+
+.navbar {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+
+  padding: 28px 5vw;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  z-index: 100;
+
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent);
+
+  backdrop-filter: blur(3px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-mark {
+  font-size: 38px;
+  line-height: 1;
+
+  transform: rotate(-15deg);
+}
+
+.logo strong {
+  display: block;
+
+  font-family: "Cormorant Garamond", serif;
+
+  font-size: 25px;
+
+  letter-spacing: 2px;
+}
+
+.logo small {
+  display: block;
+
+  font-size: 8px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 2px;
+
+  opacity: 0.65;
+}
+
+.navbar nav {
+  display: flex;
+  gap: 40px;
+}
+
+.navbar nav a {
+  position: relative;
+
+  font-size: 11px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 2px;
+
+  opacity: 0.75;
+
+  transition: 0.3s;
+}
+
+.navbar nav a:hover {
+  opacity: 1;
+}
+
+.navbar nav a::after {
+  content: "";
+
+  position: absolute;
+
+  bottom: -8px;
+  left: 0;
+
+  width: 0;
+  height: 1px;
+
+  background: white;
+
+  transition: 0.3s;
+}
+
+.navbar nav a:hover::after {
+  width: 100%;
+}
+
+.menu-button {
+  display: none;
+
+  background: transparent;
+  border: 0;
+
+  flex-direction: column;
+  gap: 5px;
+}
+
+.menu-button span {
+  display: block;
+
+  width: 23px;
+  height: 1px;
+
+  background: white;
+}
+
+/* =========================================
+   DEPTH INDICATOR
+========================================= */
+
+.depth-indicator {
+  position: fixed;
+
+  left: 3vw;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  z-index: 20;
+
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.depth-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  opacity: 0.35;
+
+  cursor: pointer;
+
+  transition: 0.5s;
+}
+
+.depth-item:hover {
+  opacity: 0.7;
+}
+
+.depth-item.active {
+  opacity: 1;
+  transform: translateX(5px);
+}
+
+.depth-icon {
+  display: grid;
+  place-items: center;
+
+  width: 34px;
+  height: 34px;
+
+  border: 1px solid rgba(255, 255, 255, 0.5);
+
+  border-radius: 50%;
+
+  font-size: 13px;
+}
+
+.depth-item.active .depth-icon {
+  background: rgba(255, 255, 255, 0.12);
+
+  box-shadow: 0 0 25px rgba(72, 211, 255, 0.3);
+}
+
+.depth-item small,
+.depth-item strong {
+  display: block;
+}
+
+.depth-item small {
+  font-size: 8px;
+
+  letter-spacing: 1px;
+}
+
+.depth-item strong {
+  font-size: 8px;
+
+  letter-spacing: 1.5px;
+
+  margin-top: 3px;
+}
+
+/* =========================================
+   HERO
+========================================= */
+
+.hero {
+  min-height: 100vh;
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  padding: 150px 12vw 100px;
+
+  overflow: hidden;
+
+  /* .hero-sky (z-index: 0) paints the sunrise/sunset; keep the
+     hero's own background dark so the transition into the fish
+     journey below stays seamless once you scroll past it. */
+  background: #020b15;
+}
+
+.hero-content {
+  max-width: 760px;
+
+  position: relative;
+
+  z-index: 5;
+}
+
+.eyebrow {
+  display: block;
+
+  font-size: 11px;
+
+  letter-spacing: 5px;
+
+  font-weight: 500;
+
+  opacity: 0.8;
+
+  margin-bottom: 25px;
+}
+
+.hero h1 {
+  font-family: "Cormorant Garamond", serif;
+
+  font-weight: 400;
+
+  font-size: clamp(55px, 7vw, 110px);
+
+  line-height: 0.85;
+
+  letter-spacing: 2px;
+
+  text-shadow: 0 5px 30px rgba(0, 0, 0, 0.25);
+}
+
+.hero h1 em,
+.section-info h2 em,
+.conservation h2 em {
+  font-style: normal;
+
+  font-weight: 600;
+
+  color: #aeefff;
+}
+
+.hero p {
+  max-width: 520px;
+
+  margin-top: 30px;
+
+  line-height: 1.8;
+
+  font-size: 15px;
+
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.dive-button {
+  margin-top: 45px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  color: white;
+
+  background: transparent;
+
+  border: 0;
+
+  text-transform: uppercase;
+
+  font-size: 10px;
+
+  letter-spacing: 3px;
+}
+
+.dive-button span {
+  display: grid;
+  place-items: center;
+
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid rgba(255, 255, 255, 0.6);
+
+  border-radius: 50%;
+
+  font-size: 20px;
+
+  animation: divePulse 2s ease-in-out infinite;
+}
+
+@keyframes divePulse {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+/* =========================================
+   FISH JOURNEY
+========================================= */
+
+.fish-journey {
+  position: relative;
+
+  /* One continuous gradient across the whole journey - not five
+     separate section backgrounds - so there is no boundary where
+     two overlays meet and create a visible line. It simply gets
+     darker the further you scroll. */
+  background: linear-gradient(
+    to bottom,
+    #020b15 0%,
+    #04202e 6%,
+    #12617f 14%,
+    #0c4d67 26%,
+    #0a3a52 42%,
+    #072940 60%,
+    #041a2c 80%,
+    #010a14 100%
+  );
+}
+
+.depth-section {
+  position: relative;
+
+  min-height: 115vh;
+
+  display: flex;
+  align-items: center;
+
+  padding: 100px 8vw 100px 17vw;
+
+  overflow: hidden;
+
+  isolation: isolate;
+}
+
+/*
+  Depth sections no longer carry their own darkening
+  gradients - that's handled by the single continuous
+  gradient on .fish-journey above, which is what removes
+  the hard boundary lines between zones.
+*/
+
+.surface-section {
+  background: radial-gradient(
+    ellipse at 70% 40%,
+    rgba(40, 183, 210, 0.25),
+    transparent 55%
+  );
+}
+
+/* =========================================
+   SEA FLOOR DECORATION
+   Coral, sea stones, underwater mountains
+   and a lost shipwreck - silhouettes only,
+   sitting behind the fish and section text.
+   Each zone gets its own shape set; the
+   deepest zone stays faint and dark so it
+   still reads as the darkest part of the sea.
+========================================= */
+
+.sea-floor-decor {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 260px;
+
+  z-index: 1;
+
+  pointer-events: none;
+
+  opacity: 0.5;
+}
+
+.sea-floor-decor svg {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+}
+
+.sea-floor-decor path,
+.sea-floor-decor polygon,
+.sea-floor-decor ellipse,
+.sea-floor-decor rect {
+  fill: rgba(1, 8, 16, 0.6);
+}
+
+.surface-section .sea-floor-decor {
+  opacity: 0.55;
+}
+
+.coastal-section .sea-floor-decor {
+  opacity: 0.55;
+}
+
+.open-section .sea-floor-decor {
+  height: 300px;
+
+  opacity: 0.45;
+}
+
+.deep-section .sea-floor-decor {
+  height: 300px;
+
+  opacity: 0.35;
+}
+
+.deep-sea-section .sea-floor-decor {
+  height: 260px;
+
+  opacity: 0.18;
+}
+
+.deep-sea-section .sea-floor-decor path,
+.deep-sea-section .sea-floor-decor polygon,
+.deep-sea-section .sea-floor-decor rect,
+.deep-sea-section .sea-floor-decor ellipse {
+  fill: rgba(0, 3, 7, 0.9);
+}
+
+/* =========================================
+   SECTION INFORMATION
+========================================= */
+
+.section-info {
+  position: relative;
+
+  z-index: 10;
+
+  width: 310px;
+
+  flex-shrink: 0;
+}
+
+.zone-number {
+  display: block;
+
+  font-size: 12px;
+
+  letter-spacing: 3px;
+
+  color: #77e6ff;
+
+  margin-bottom: 20px;
+}
+
+.zone-depth {
+  display: block;
+
+  font-size: 9px;
+
+  letter-spacing: 3px;
+
+  opacity: 0.55;
+
+  margin-bottom: 12px;
+}
+
+.section-info h2 {
+  font-family: "Cormorant Garamond", serif;
+
+  font-size: 58px;
+
+  line-height: 0.85;
+
+  font-weight: 400;
+
+  letter-spacing: 2px;
+}
+
+.section-info p {
+  max-width: 270px;
+
+  margin-top: 25px;
+
+  font-size: 12px;
+
+  line-height: 1.8;
+
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* =========================================
+   FISH FIELD
+========================================= */
+
+.fish-field {
+  position: relative;
+
+  flex: 1;
+
+  height: 600px;
+}
+
+/* =========================================
+   FISH
+========================================= */
+
+.fish {
+  position: absolute;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  background: transparent;
+
+  border: 0;
+
+  color: white;
+
+  transition:
+    transform 0.45s ease,
+    filter 0.45s ease;
+
+  animation: fishFloat 5s ease-in-out infinite;
+
+  z-index: 3;
+}
+
+.fish:hover {
+  transform: scale(1.08) translateY(-5px);
+
+  filter: drop-shadow(0 0 25px rgba(111, 226, 255, 0.65));
+
+  z-index: 20;
+}
+
+.fish img {
+  display: block;
+
+  width: 170px;
+  max-height: 110px;
+
+  object-fit: contain;
+
+  transition: 0.5s;
+}
+
+.fish:hover img {
+  filter: drop-shadow(0 0 15px rgba(102, 229, 255, 0.5));
+}
+
+.fish span {
+  margin-top: 8px;
+
+  font-size: 10px;
+
+  letter-spacing: 2px;
+
+  font-weight: 600;
+}
+
+.fish small {
+  margin-top: 3px;
+
+  font-size: 9px;
+
+  opacity: 0.5;
+}
+
+@keyframes fishFloat {
+  0%,
+  100% {
+    margin-top: 0;
+  }
+
+  50% {
+    margin-top: -13px;
+  }
+}
+
+/* =========================================
+   FISH POSITIONS
+========================================= */
+
+.galunggong {
+  top: 8%;
+  left: 8%;
+}
+
+.tamban {
+  top: 4%;
+  left: 52%;
+
+  animation-delay: -1s;
+}
+
+.sapsap {
+  top: 38%;
+  left: 28%;
+
+  animation-delay: -2s;
+}
+
+.dilis {
+  top: 42%;
+  left: 67%;
+
+  animation-delay: -3s;
+}
+
+.hipon {
+  top: 68%;
+  left: 45%;
+
+  animation-delay: -2s;
+}
+
+.sugpo {
+  top: 14%;
+  left: 82%;
+
+  animation-delay: -4s;
+}
+
+.guso {
+  top: 62%;
+  left: 10%;
+
+  animation-delay: -1s;
+}
+
+.lapu {
+  top: 5%;
+  left: 15%;
+}
+
+.maya {
+  top: 33%;
+  left: 48%;
+
+  animation-delay: -2s;
+}
+
+.bisugo {
+  top: 55%;
+  left: 73%;
+
+  animation-delay: -1s;
+}
+
+.alimango {
+  top: 72%;
+  left: 20%;
+
+  animation-delay: -3s;
+}
+
+.alimasag {
+  top: 14%;
+  left: 62%;
+
+  animation-delay: -2s;
+}
+
+.talaba {
+  top: 46%;
+  left: 87%;
+
+  animation-delay: -4s;
+}
+
+.talakitok {
+  top: 18%;
+  left: 13%;
+}
+
+.tulingan {
+  top: 10%;
+  left: 56%;
+
+  animation-delay: -3s;
+}
+
+.tambakol {
+  top: 55%;
+  left: 35%;
+
+  animation-delay: -1s;
+}
+
+.tahong {
+  top: 30%;
+  left: 82%;
+
+  animation-delay: -4s;
+}
+
+.kuhol {
+  top: 72%;
+  left: 15%;
+
+  animation-delay: -2s;
+}
+
+.tanguigue {
+  top: 13%;
+  left: 15%;
+}
+
+.malasugi {
+  top: 43%;
+  left: 53%;
+
+  animation-delay: -2s;
+}
+
+.barakuda {
+  top: 67%;
+  left: 75%;
+
+  animation-delay: -4s;
+}
+
+.halaan {
+  top: 20%;
+  left: 82%;
+
+  animation-delay: -1s;
+}
+
+.banagan {
+  top: 58%;
+  left: 22%;
+
+  animation-delay: -3s;
+}
+
+.pusit {
+  top: 15%;
+  left: 12%;
+
+  animation-delay: -1s;
+}
+
+.kitang {
+  top: 52%;
+  left: 48%;
+
+  animation-delay: -3s;
+}
+
+.dogtooth {
+  top: 67%;
+  left: 72%;
+
+  animation-delay: -2s;
+}
+
+.pugita {
+  top: 32%;
+  left: 85%;
+
+  animation-delay: -4s;
+}
+
+.suwaki {
+  top: 78%;
+  left: 32%;
+
+  animation-delay: -1s;
+}
+
+/* =========================================
+   CONSERVATION
+========================================= */
+
+.conservation {
+  min-height: 100vh;
+
+  padding: 180px 10vw;
+
+  text-align: center;
+
+  background:
+    radial-gradient(
+      ellipse at center top,
+      rgba(14, 83, 110, 0.45),
+      transparent 65%
+    ),
+    #010914;
+}
+
+.conservation-icon {
+  display: grid;
+
+  place-items: center;
+
+  width: 55px;
+  height: 55px;
+
+  margin: auto auto 30px;
+
+  border: 1px solid rgba(126, 225, 255, 0.5);
+
+  border-radius: 50%;
+
+  font-size: 25px;
+
+  color: #81e5ff;
+}
+
+.conservation h2 {
+  font-family: "Cormorant Garamond", serif;
+
+  font-size: clamp(55px, 7vw, 100px);
+
+  line-height: 0.85;
+
+  font-weight: 400;
+}
+
+.conservation > p {
+  max-width: 570px;
+
+  margin: 30px auto 70px;
+
+  font-size: 14px;
+
+  line-height: 1.8;
+
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.conservation-grid {
+  max-width: 950px;
+
+  margin: auto;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 20px;
+}
+
+.conservation-grid article {
+  padding: 35px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: rgba(255, 255, 255, 0.025);
+
+  text-align: left;
+
+  transition: 0.4s;
+}
+
+.conservation-grid article:hover {
+  transform: translateY(-8px);
+
+  border-color: rgba(105, 221, 255, 0.35);
+}
+
+.conservation-grid article span {
+  color: #68dfff;
+
+  font-size: 10px;
+
+  letter-spacing: 2px;
+}
+
+.conservation-grid h3 {
+  margin-top: 25px;
+
+  font-size: 12px;
+
+  letter-spacing: 2px;
+}
+
+.conservation-grid p {
+  margin-top: 15px;
+
+  font-size: 11px;
+
+  line-height: 1.8;
+
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* =========================================
+   MODAL
+========================================= */
+
+.fish-modal {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 500;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: opacity 0.4s ease;
+}
+
+.fish-modal.open {
+  opacity: 1;
+
+  pointer-events: auto;
+}
+
+.modal-backdrop {
+  position: absolute;
+
+  inset: 0;
+
+  background: rgba(0, 8, 17, 0.78);
+
+  backdrop-filter: blur(15px);
+}
+
+.fish-card {
+  position: relative;
+
+  width: min(920px, 100%);
+
+  max-height: 90vh;
+
+  display: grid;
+
+  grid-template-columns: 42% 58%;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(151, 232, 255, 0.2);
+
+  border-radius: 20px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(9, 64, 88, 0.95),
+    rgba(1, 15, 29, 0.98)
+  );
+
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.7);
+
+  transform: translateY(30px) scale(0.97);
+
+  transition: transform 0.5s ease;
+}
+
+.fish-modal.open .fish-card {
+  transform: translateY(0) scale(1);
+}
+
+.close-modal {
+  position: absolute;
+
+  top: 20px;
+  right: 20px;
+
+  width: 38px;
+  height: 38px;
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  border-radius: 50%;
+
+  color: white;
+
+  background: rgba(0, 0, 0, 0.25);
+
+  font-size: 24px;
+
+  z-index: 10;
+}
+
+.modal-image {
+  min-height: 500px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 40px;
+
+  background: radial-gradient(
+    circle at center,
+    rgba(50, 183, 220, 0.3),
+    transparent 60%
+  );
+}
+
+.modal-image img {
+  width: 100%;
+  max-height: 350px;
+
+  object-fit: contain;
+
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
+
+  animation: modalFish 4s ease-in-out infinite;
+}
+
+@keyframes modalFish {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-10px) rotate(-2deg);
+  }
+}
+
+.modal-content {
+  padding: 65px 55px 45px;
+
+  overflow-y: auto;
+}
+
+.modal-category {
+  font-size: 9px;
+
+  letter-spacing: 3px;
+
+  color: #6fe3ff;
+}
+
+.modal-content h2 {
+  margin-top: 15px;
+
+  font-family: "Cormorant Garamond", serif;
+
+  font-size: 60px;
+
+  font-weight: 400;
+
+  line-height: 0.9;
+}
+
+.scientific {
+  margin-top: 10px;
+
+  font-family: "Cormorant Garamond", serif;
+
+  font-size: 19px;
+
+  font-style: italic;
+
+  color: #79dfff;
+}
+
+.modal-divider {
+  width: 100%;
+
+  height: 1px;
+
+  margin: 30px 0;
+
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.info-row {
+  display: flex;
+
+  gap: 15px;
+
+  margin-bottom: 25px;
+}
+
+.info-icon {
+  width: 30px;
+  height: 30px;
+
+  flex-shrink: 0;
+
+  display: grid;
+
+  place-items: center;
+
+  border: 1px solid rgba(109, 224, 255, 0.3);
+
+  border-radius: 50%;
+
+  color: #6ee4ff;
+
+  font-size: 11px;
+}
+
+.info-row small {
+  font-size: 8px;
+
+  letter-spacing: 2px;
+
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.info-row p {
+  margin-top: 6px;
+
+  font-size: 11px;
+
+  line-height: 1.6;
+
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.modal-footer {
+  margin-top: 35px;
+
+  padding-top: 25px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+}
+
+.modal-footer span {
+  font-size: 8px;
+
+  letter-spacing: 2px;
+
+  color: #72e5ff;
+}
+
+.modal-footer span i {
+  display: inline-block;
+
+  width: 6px;
+  height: 6px;
+
+  margin-right: 7px;
+
+  border-radius: 50%;
+
+  background: #61e0ff;
+
+  box-shadow: 0 0 10px #61e0ff;
+}
+
+.modal-footer button {
+  padding: 11px 25px;
+
+  border: 1px solid rgba(109, 225, 255, 0.4);
+
+  background: transparent;
+
+  color: white;
+
+  font-size: 9px;
+
+  letter-spacing: 2px;
+
+  transition: 0.3s;
+}
+
+.modal-footer button:hover {
+  background: rgba(109, 225, 255, 0.1);
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+  position: relative;
+
+  padding: 80px 7vw 30px;
+
+  background: #010812;
+
+  display: grid;
+
+  grid-template-columns:
+    1.4fr
+    1fr
+    1fr
+    1fr
+    1.4fr;
+
+  gap: 40px;
+}
+
+.footer-brand {
+  display: flex;
+
+  gap: 12px;
+
+  align-items: flex-start;
+}
+
+.footer-logo {
+  font-size: 35px;
+}
+
+.footer-brand strong {
+  display: block;
+
+  font-family: "Cormorant Garamond", serif;
+
+  font-size: 22px;
+
+  letter-spacing: 2px;
+}
+
+.footer-brand small {
+  font-size: 8px;
+
+  opacity: 0.5;
+
+  letter-spacing: 1px;
+}
+
+.footer-column {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.footer-column h4 {
+  margin-bottom: 8px;
+
+  font-size: 9px;
+
+  letter-spacing: 2px;
+
+  color: #6fdfff;
+}
+
+.footer-column a,
+.footer-column p {
+  font-size: 10px;
+
+  color: rgba(255, 255, 255, 0.5);
+
+  transition: 0.3s;
+}
+
+.footer-column a:hover {
+  color: white;
+}
+
+.newsletter form {
+  display: flex;
+
+  margin-top: 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.newsletter input {
+  width: 100%;
+
+  padding: 13px;
+
+  background: transparent;
+
+  border: 0;
+
+  outline: 0;
+
+  color: white;
+
+  font-size: 9px;
+}
+
+.newsletter button {
+  width: 45px;
+
+  border: 0;
+
+  background: transparent;
+
+  color: white;
+}
+
+.copyright {
+  grid-column: 1 / -1;
+
+  margin-top: 30px;
+
+  padding-top: 25px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+  text-align: center;
+
+  font-size: 9px;
+
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1000px) {
+  .depth-indicator {
+    display: none;
+  }
+
+  .navbar nav {
+    display: none;
+  }
+
+  .menu-button {
+    display: flex;
+  }
+
+  .hero {
+    padding-left: 8vw;
+    padding-right: 8vw;
+  }
+
+  .depth-section {
+    padding: 100px 7vw;
+  }
+
+  .section-info {
+    width: 250px;
+  }
+
+  .section-info h2 {
+    font-size: 48px;
+  }
+
+  .fish img {
+    width: 130px;
+  }
+
+  footer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .navbar {
+    padding: 20px;
+  }
+
+  .logo strong {
+    font-size: 19px;
+  }
+
+  .hero {
+    min-height: 100vh;
+
+    padding: 120px 25px 70px;
+
+    align-items: flex-end;
+  }
+
+  .hero h1 {
+    font-size: 52px;
+  }
+
+  .hero p {
+    font-size: 12px;
+  }
+
+  .depth-section {
+    min-height: 100vh;
+
+    display: block;
+
+    padding: 120px 25px 80px;
+  }
+
+  .section-info {
+    width: 100%;
+  }
+
+  .section-info h2 {
+    font-size: 45px;
+  }
+
+  .fish-field {
+    height: 700px;
+
+    margin-top: 30px;
+  }
+
+  .fish img {
+    width: 100px;
+  }
+
+  .fish span {
+    font-size: 8px;
+  }
+
+  .fish small {
+    font-size: 7px;
+  }
+
+  .fish-card {
+    display: block;
+
+    max-height: 92vh;
+
+    overflow-y: auto;
+  }
+
+  .modal-image {
+    min-height: 260px;
+
+    padding: 30px;
+  }
+
+  .modal-image img {
+    max-height: 220px;
+  }
+
+  .modal-content {
+    padding: 30px 25px;
+  }
+
+  .modal-content h2 {
+    font-size: 45px;
+  }
+
+  .conservation {
+    padding: 120px 25px;
+  }
+
+  .conservation-grid {
+    grid-template-columns: 1fr;
+  }
+
+  footer {
+    grid-template-columns: 1fr;
+
+    padding: 60px 25px 30px;
+  }
+
+  .footer-brand {
+    grid-column: auto;
+  }
+
+  .copyright {
+    grid-column: auto;
+  }
+}
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+  position: relative;
+
+  padding: 80px 7vw 30px;
+
+  background: #010812;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  text-align: center;
+}
+
+.footer-logo {
+  font-size: 35px;
+  line-height: 1;
+}
+
+.footer-brand > div:last-child {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.footer-brand strong {
+  display: block;
+
+  font-family: "Cormorant Garamond", serif;
+
+  font-size: 22px;
+
+  letter-spacing: 2px;
+}
+
+.footer-brand small {
+  display: block;
+
+  margin-top: 4px;
+
+  font-size: 8px;
+
+  opacity: 0.5;
+
+  letter-spacing: 1px;
+}
+
+.footer-column {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.footer-column h4 {
+  margin-bottom: 8px;
+
+  font-size: 9px;
+
+  letter-spacing: 2px;
+
+  color: #6fdfff;
+}
+
+.footer-column a,
+.footer-column p {
+  font-size: 10px;
+
+  color: rgba(255, 255, 255, 0.5);
+
+  transition: 0.3s;
+}
+
+.footer-column a:hover {
+  color: white;
+}
+
+.newsletter form {
+  display: flex;
+
+  margin-top: 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.newsletter input {
+  width: 100%;
+
+  padding: 13px;
+
+  background: transparent;
+
+  border: 0;
+
+  outline: 0;
+
+  color: white;
+
+  font-size: 9px;
+}
+
+.newsletter button {
+  width: 45px;
+
+  border: 0;
+
+  background: transparent;
+
+  color: white;
+}
+
+.copyright {
+  width: 100%;
+  max-width: 900px;
+
+  margin-top: 30px;
+
+  padding-top: 25px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+  text-align: center;
+
+  font-size: 9px;
+
+  color: rgba(255, 255, 255, 0.3);
+}

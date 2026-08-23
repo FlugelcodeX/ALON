@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Aquatic Life Of the Nation — The Fish Our Waters Provide</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet" />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- =========================================
+       BACKGROUND
+  ========================================== -->
+
+    <div class="ocean-background">
+      <div class="underwater-particles"></div>
+
+      <div class="bubbles">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- =========================================
+       NAVIGATION
+  ========================================== -->
+
+    <header class="navbar">
+      <a href="#" class="logo">
+        <div class="logo-mark">≋</div>
+
+        <div>
+          <strong>Aquatic Life Of the Nation</strong>
+          <small>The Fish Our Waters Provide</small>
+        </div>
+      </a>
+
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#fish">Fishes</a>
+        <a href="#about">About</a>
+        <a href="#sustainability">Sustainability</a>
+      </nav>
+
+      <button class="menu-button" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </header>
+
+    <!-- =========================================
+       DEPTH INDICATOR
+  ========================================== -->
+
+    <aside class="depth-indicator">
+      <div class="depth-item active" data-depth="0">
+        <span class="depth-icon">☼</span>
+        <div>
+          <small>0 – 30 m</small>
+          <strong>SURFACE</strong>
+        </div>
+      </div>
+
+      <div class="depth-item" data-depth="1">
+        <span class="depth-icon">◌</span>
+        <div>
+          <small>30 – 100 m</small>
+          <strong>COASTAL</strong>
+        </div>
+      </div>
+
+      <div class="depth-item" data-depth="2">
+        <span class="depth-icon">≋</span>
+        <div>
+          <small>100 – 300 m</small>
+          <strong>OPEN WATER</strong>
+        </div>
+      </div>
+
+      <div class="depth-item" data-depth="3">
+        <span class="depth-icon">◉</span>
+        <div>
+          <small>300 – 800 m</small>
+          <strong>DEEP WATER</strong>
+        </div>
+      </div>
+
+      <div class="depth-item" data-depth="4">
+        <span class="depth-icon">⌁</span>
+        <div>
+          <small>800 m+</small>
+          <strong>DEEP SEA</strong>
+        </div>
+      </div>
+    </aside>
+
+    <!-- =========================================
+       MAIN
+  ========================================== -->
+
+    <main id="home">
+      <!-- HERO -->
+
+      <section class="hero">
+        <!-- Sunrise/sunset lives only in the hero. It scrolls
+             away with this section instead of staying pinned
+             to the viewport, so it never bleeds into content
+             further down the page. -->
+        <div class="hero-sky">
+          <div class="sunset"></div>
+
+          <div class="sun"></div>
+
+          <!-- Waving sea surface. Two opaque, mask-clipped layers
+               instead of a translucent SVG over a flat-edged fill,
+               so there is no seam where "wave" meets "water". The
+               sun visually sets/rises behind this line: once its
+               position moves past it, the opaque water hides it. -->
+          <div class="sea-surface">
+            <div class="wave-layer wave-back"></div>
+            <div class="wave-layer wave-front"></div>
+            <div class="sea-fill"></div>
+          </div>
+
+          <div class="light-rays">
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+          </div>
+        </div>
+
+        <div class="hero-content">
+          <span class="eyebrow"> FROM SURFACE TO DEPTH </span>
+
+          <h1>
+            DISCOVER THE FISH
+            <br />
+            <em>OF THE PHILIPPINES</em>
+          </h1>
+
+          <p>
+            From the golden surface to the deeper waters, discover the fish,
+            shellfish and other sea life that have fed Filipino communities for
+            generations.
+          </p>
+
+          <button class="dive-button" onclick="scrollToFish()">
+            <span>↓</span>
+            SCROLL TO DIVE
+          </button>
+        </div>
+
+        <div class="hero-wave"></div>
+      </section>
+
+      <!-- =========================================
+         FISH JOURNEY
+    ========================================== -->
+
+      <section id="fish" class="fish-journey">
+        <!-- SURFACE -->
+
+        <section class="depth-section surface-section">
+          <div class="water-bubbles" aria-hidden="true"></div>
+
+          <div class="section-info">
+            <span class="zone-number">01</span>
+
+            <span class="zone-depth"> 0 – 30 METERS </span>
+
+            <h2>SURFACE<br /><em>ZONE</em></h2>
+
+            <p>
+              Near the surface where sunlight is plentiful and life is abundant.
+            </p>
+          </div>
+
+          <div class="fish-field">
+            <button
+              class="fish galunggong"
+              data-fish="galunggong"
+              aria-label="Galunggong">
+              <img src="galunggong.png" />
+              <span>GALUNGGONG</span>
+              <small>Round Scad</small>
+            </button>
+
+            <button class="fish tamban" data-fish="tamban" aria-label="Tamban">
+              <img src="tamban.png" />
+              <span>TAMBAN</span>
+              <small>Sardine</small>
+            </button>
+
+            <button class="fish sapsap" data-fish="sapsap" aria-label="Sapsap">
+              <img src="sapsap.png" />
+              <span>SAPSAP</span>
+              <small>Ponyfish</small>
+            </button>
+
+            <button class="fish dilis" data-fish="dilis" aria-label="Dilis">
+              <img src="dilis.png" />
+              <span>DILIS</span>
+              <small>Anchovy</small>
+            </button>
+
+            <button class="fish hipon" data-fish="hipon" aria-label="Hipon">
+              <img src="hipon.png" />
+              <span>HIPON</span>
+              <small>Shrimp</small>
+            </button>
+
+            <button class="fish sugpo" data-fish="sugpo" aria-label="Sugpo">
+              <img src="sugpo.png" />
+              <span>SUGPO</span>
+              <small>Tiger Prawn</small>
+            </button>
+
+            <button class="fish guso" data-fish="guso" aria-label="Guso">
+              <img src="guso.png" />
+              <span>GUSO</span>
+              <small>Seaweed</small>
+            </button>
+          </div>
+        </section>
+
+        <!-- COASTAL -->
+
+        <section class="depth-section coastal-section">
+          <div class="water-bubbles" aria-hidden="true"></div>
+
+          <div class="section-info">
+            <span class="zone-number">02</span>
+
+            <span class="zone-depth"> 30 – 100 METERS </span>
+
+            <h2>COASTAL<br /><em>ZONE</em></h2>
+
+            <p>
+              Reefs, rocky areas and coastal waters filled with some of the
+              Philippines' most popular catches.
+            </p>
+          </div>
+
+          <div class="fish-field">
+            <button class="fish lapu" data-fish="lapu-lapu">
+              <img src="lapu-lapu.png" />
+              <span>LAPU-LAPU</span>
+              <small>Grouper</small>
+            </button>
+
+            <button class="fish maya" data-fish="maya-maya">
+              <img src="maya-maya.png" />
+              <span>MAYA-MAYA</span>
+              <small>Snapper</small>
+            </button>
+
+            <button class="fish bisugo" data-fish="bisugo">
+              <img src="bisugo.png" />
+              <span>BISUGO</span>
+              <small>Threadfin Bream</small>
+            </button>
+
+            <button
+              class="fish alimango"
+              data-fish="alimango"
+              aria-label="Alimango">
+              <img src="alimango.png" />
+              <span>ALIMANGO</span>
+              <small>Mud Crab</small>
+            </button>
+
+            <button
+              class="fish alimasag"
+              data-fish="alimasag"
+              aria-label="Alimasag">
+              <img src="alimasag.png" />
+              <span>ALIMASAG</span>
+              <small>Blue Swimming Crab</small>
+            </button>
+
+            <button class="fish talaba" data-fish="talaba" aria-label="Talaba">
+              <img src="talaba.png" />
+              <span>TALABA</span>
+              <small>Oyster</small>
+            </button>
+          </div>
+        </section>
+
+        <!-- OPEN WATER -->
+
+        <section class="depth-section open-section">
+          <div class="water-bubbles" aria-hidden="true"></div>
+
+          <div class="section-info">
+            <span class="zone-number">03</span>
+
+            <span class="zone-depth"> 100 – 300 METERS </span>
+
+            <h2>OPEN WATER<br /><em>ZONE</em></h2>
+
+            <p>
+              Open waters where strong swimmers roam through the Philippine
+              seas.
+            </p>
+          </div>
+
+          <div class="fish-field">
+            <button class="fish talakitok" data-fish="talakitok">
+              <img src="talakitok.png" />
+              <span>TALAKITOK</span>
+              <small>Trevally</small>
+            </button>
+
+            <button class="fish tulingan" data-fish="tulingan">
+              <img src="tulingan.png" />
+              <span>TULINGAN</span>
+              <small>Frigate Tuna</small>
+            </button>
+
+            <button class="fish tambakol" data-fish="tambakol">
+              <img src="tambakol.png" />
+              <span>TAMBAKOL</span>
+              <small>Yellowfin Tuna</small>
+            </button>
+
+            <button class="fish tahong" data-fish="tahong" aria-label="Tahong">
+              <img src="tahong.png" />
+              <span>TAHONG</span>
+              <small>Mussel</small>
+            </button>
+
+            <button class="fish kuhol" data-fish="kuhol" aria-label="Kuhol">
+              <img src="kuhol.png" />
+              <span>KUHOL</span>
+              <small>Snail</small>
+            </button>
+          </div>
+        </section>
+
+        <!-- DEEP WATER -->
+
+        <section class="depth-section deep-section">
+          <div class="water-bubbles" aria-hidden="true"></div>
+
+          <div class="section-info">
+            <span class="zone-number">04</span>
+
+            <span class="zone-depth"> 300 – 800 METERS </span>
+
+            <h2>DEEP WATER<br /><em>ZONE</em></h2>
+
+            <p>
+              Deeper waters where larger fish and stronger swimmers can be
+              found.
+            </p>
+          </div>
+
+          <div class="fish-field">
+            <button class="fish tanguigue" data-fish="tanguigue">
+              <img src="tanguigue.png" />
+              <span>TANGUIGUE</span>
+              <small>Spanish Mackerel</small>
+            </button>
+
+            <button class="fish malasugi" data-fish="malasugi">
+              <img src="malasugi.png" />
+              <span>MALASUGI</span>
+              <small>Blue Marlin</small>
+            </button>
+
+            <button class="fish barakuda" data-fish="barakuda">
+              <img src="barakuda.png" />
+              <span>BARAKUDA</span>
+              <small>Barracuda</small>
+            </button>
+
+            <button class="fish halaan" data-fish="halaan" aria-label="Halaan">
+              <img src="halaan.png" />
+              <span>HALAAN</span>
+              <small>Clam</small>
+            </button>
+
+            <button
+              class="fish banagan"
+              data-fish="banagan"
+              aria-label="banagan">
+              <img src="banagan.png" />
+              <span>banagan</span>
+              <small>Spiny Lobster</small>
+            </button>
+          </div>
+        </section>
+
+        <!-- DEEP SEA -->
+
+        <section class="depth-section deep-sea-section">
+          <div class="water-bubbles" aria-hidden="true"></div>
+
+          <!-- Lost shipwreck, kept faint and dark -->
+          <div class="sea-floor-decor" aria-hidden="true">
+            <svg
+              viewBox="0 0 1200 260"
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <g transform="rotate(-7 600 190)">
+                <path
+                  d="M300,225 L280,190 L900,190 L945,225 L860,248 L400,248 Z" />
+                <rect x="555" y="70" width="10" height="125" />
+                <path d="M565,80 L630,118 L565,120 Z" />
+                <rect x="620" y="95" width="8" height="95" />
+                <path d="M628,105 L680,132 L628,134 Z" />
+              </g>
+              <ellipse cx="130" cy="250" rx="100" ry="35" />
+              <ellipse cx="1080" cy="245" rx="120" ry="40" />
+            </svg>
+          </div>
+
+          <div class="section-info">
+            <span class="zone-number">05</span>
+
+            <span class="zone-depth"> 800 METERS AND BELOW </span>
+
+            <h2>DEEP SEA<br /><em>ZONE</em></h2>
+
+            <p>
+              The deepest waters reached by some Philippine fishing activities.
+            </p>
+          </div>
+
+          <div class="fish-field">
+            <button class="fish pusit" data-fish="pusit">
+              <img src="pusit.png" />
+              <span>PUSIT</span>
+              <small>Squid</small>
+            </button>
+
+            <button class="fish kitang" data-fish="kitang">
+              <img src="kitang.png" />
+              <span>KITANG</span>
+              <small>Rabbitfish</small>
+            </button>
+
+            <button class="fish dogtooth" data-fish="dogtooth-tuna">
+              <img src="dogtooth-tuna.png" />
+              <span>DOGTOOTH TUNA</span>
+              <small>Tuna</small>
+            </button>
+
+            <button class="fish pugita" data-fish="pugita" aria-label="Pugita">
+              <img src="pugita.png" />
+              <span>PUGITA</span>
+              <small>Octopus</small>
+            </button>
+
+            <button class="fish suwaki" data-fish="suwaki" aria-label="suwaki">
+              <img src="suwaki.png" />
+              <span>suwaki</span>
+              <small>Sea Urchin</small>
+            </button>
+          </div>
+        </section>
+      </section>
+
+      <!-- =========================================
+         CONSERVATION
+    ========================================== -->
+
+      <section id="sustainability" class="conservation">
+        <span class="conservation-icon">≋</span>
+
+        <span class="eyebrow"> OUR SEAS, OUR FUTURE </span>
+
+        <h2>
+          THE OCEAN
+          <em>FEEDS US.</em>
+        </h2>
+
+        <p>
+          Philippine fishermen have relied on these waters for generations.
+          Understanding what lives beneath them is the first step toward
+          protecting them.
+        </p>
+
+        <div class="conservation-grid">
+          <article>
+            <span>01</span>
+            <h3>SUPPORT LOCAL</h3>
+            <p>
+              Support Filipino fishing communities and responsible fishing
+              practices.
+            </p>
+          </article>
+
+          <article>
+            <span>02</span>
+            <h3>PROTECT OUR WATERS</h3>
+            <p>
+              Healthy reefs and coastal ecosystems mean healthier fisheries.
+            </p>
+          </article>
+
+          <article>
+            <span>03</span>
+            <h3>FISH RESPONSIBLY</h3>
+            <p>
+              Choose sustainable seafood and respect local fishing regulations.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <!-- =========================================
+       FISH INFORMATION MODAL
+  ========================================== -->
+
+    <div class="fish-modal" id="fishModal">
+      <div class="modal-backdrop"></div>
+
+      <div class="fish-card">
+        <button class="close-modal" id="closeModal">×</button>
+
+        <div class="modal-image">
+          <img id="modalImage" src="" alt="" />
+        </div>
+
+        <div class="modal-content">
+          <span class="modal-category"> PHILIPPINE SEA LIFE </span>
+
+          <h2 id="modalName">Lapu-Lapu</h2>
+
+          <p class="scientific" id="modalScientific">Grouper</p>
+
+          <div class="modal-divider"></div>
+
+          <div class="info-row">
+            <span class="info-icon">◉</span>
+
+            <div>
+              <small>DESCRIPTION</small>
+              <p id="modalDescription"></p>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <span class="info-icon">⌁</span>
+
+            <div>
+              <small>HABITAT</small>
+              <p id="modalHabitat"></p>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <span class="info-icon">↓</span>
+
+            <div>
+              <small>DEPTH</small>
+              <p id="modalDepth"></p>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <span class="info-icon">◌</span>
+
+            <div>
+              <small>COMMONLY CAUGHT WITH</small>
+              <p id="modalMethods"></p>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <span>
+              <i></i>
+              LOCAL CATCH
+            </span>
+
+            <button id="modalCloseButton">CLOSE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================
+       FOOTER
+  ========================================== -->
+
+    <footer id="about">
+      <div class="footer-brand">
+        <div class="footer-logo">≋</div>
+
+        <div>
+          <strong>Aquatic Life Of the Nation</strong>
+          <small>The Fish Our Waters Provide</small>
+        </div>
+      </div>
+
+      <div class="copyright">
+        © 2026 Aquatic Life Of the Nation. Created with respect for Philippine
+        waters.
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
